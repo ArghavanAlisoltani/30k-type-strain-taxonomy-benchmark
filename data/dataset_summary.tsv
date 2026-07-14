@@ -1,0 +1,8 @@
+summary_type	category	count	percent_of_30495
+domain	Archaea	1112	3.646
+domain	Bacteria	29383	96.354
+assembly_level	Chromosome	480	1.574
+assembly_level	Complete Genome	5970	19.577
+assembly_level	Contig	14369	47.119
+assembly_level	Scaffold	9676	31.730
+assembly_group	Complete Genome + Chromosome	6450	21.151
