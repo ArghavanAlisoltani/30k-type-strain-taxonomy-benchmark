@@ -1,8 +1,5 @@
-# 16S vs FastAAI tree-comparison bundle v4
+# 16S vs FastAAI tree-comparison bundle
 
-This v4 bundle extends v3. The headline change is **manual color control**: every
-color used in the tanglegrams and the kingdom-monophyly heatmap is now defined
-explicitly in a single file, `tanglegram_colors.py`. Nothing is auto-assigned.
 
 ## Tanglegram leaf ordering (16S is the fixed reference)
 
