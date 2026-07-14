@@ -7,7 +7,7 @@ compact NCBI assembly metadata, provenance notes, and custom scripts.
 
 ## Dataset snapshot
 
-The final benchmark contains **30,495 unique GenBank assembly accessions**:
+The benchmark contains **30,495 unique GenBank assembly accessions**:
 
 | Category | Count | Percentage |
 |---|---:|---:|
