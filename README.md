@@ -1,4 +1,4 @@
-## **Benchmarking Sequence-Based Taxonomic Methods Across 30,495 Prokaryotic Type-Strain Genomes**
+## **Taxonomic Resolution of 16S rRNA, FastANI, Mash, and FastAAI across 30,495 Prokaryotic Type-Strain Genomes**
 
 This study evaluates four complementary sequence-based approaches—16S rRNA identity,
 FastANI, Mash, and FastAAI/Jaccard—across a frozen collection of prokaryotic
