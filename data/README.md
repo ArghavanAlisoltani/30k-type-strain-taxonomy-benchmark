@@ -8,5 +8,3 @@ derived from that fixed accession set.
 - `gca_accessions_30495.txt`: accession manifest.
 - `dataset_summary.tsv`: domain and assembly-level summaries.
 - `source_retrieval_urls.tsv`: original NCBI query URLs and access date.
-
-Run `../scripts/validate_release.py` to verify the release.
