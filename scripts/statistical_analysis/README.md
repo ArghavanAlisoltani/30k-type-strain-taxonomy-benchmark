@@ -25,6 +25,3 @@ The existing `roc_pr.py`, `thresholds.py`, and `plot.py` are compact convenience
 
 The large pairwise method outputs, taxonomy tables, and derived analysis tables are intentionally not stored in GitHub.
 
-## Provenance
-
-The Python files under `final_species_discrimination/` are verbatim copies from the canonical analysis bundle embedded in `MASTER_30K_ANALYSIS_AUDIT.ipynb`; only repository filenames/locations were changed for clarity.
