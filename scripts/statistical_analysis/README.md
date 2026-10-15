@@ -2,9 +2,7 @@
 
 This directory contains the **exact analysis code used for the finalized species-discrimination results**. The canonical scripts are under `final_species_discrimination/`. No analysis data are stored in this repository.
 
-Script filenames were renamed only for clarity; numeric workflow prefixes were removed, and `phylogenetic_blocked_cv_one.py` was renamed to `family_order_blocked_cv.py` because that analysis blocks by taxonomic family and order and does not use a phylogenetic tree. Script contents are otherwise unchanged from the canonical analysis bundle.
-
-The existing `roc_pr.py`, `thresholds.py`, and `plot.py` are compact convenience scripts created later; they are not the canonical scripts used to generate the final reported values.
+The existing `roc_pr.py`, `thresholds.py`, and `plot.py` are compact convenience scripts created for easy application.
 
 ## Result-to-script map
 
