@@ -1,35 +1,30 @@
 # Statistical analysis
 
-Compact scripts for the manuscript species-discrimination analyses: continuous-score ROC/PR performance and fixed literature-supported species thresholds.
+This directory contains the **exact analysis code used for the finalized species-discrimination results**. The canonical scripts are under `final_species_discrimination/`, which mirrors the original analysis-bundle layout so the script contents can remain unchanged. No analysis data are stored in this repository.
 
-## Input
+The existing `roc_pr.py`, `thresholds.py`, and `plot.py` are compact convenience scripts created later; they are not the canonical scripts used to generate the final reported values.
 
-The large pairwise score table is not stored in GitHub. Both analysis scripts expect a local tab-separated file named:
+## Result-to-script map
 
-`data/species_discrimination_scores.tsv`
+| Result | Exact script(s) | Input type |
+|---|---|---|
+| Primary NCBI ROC/PR, literature-threshold performance, common complete-case analysis (Tables S4-S5) | `scripts/01_primary_roc_pr.py` | Derived pair-level table containing NCBI SS/SGDS labels and numeric 16S, FastANI, Mash, and FastAAI/Jaccard scores |
+| GTDB R232 relabeling sensitivity (Table S4) | `scripts/04_gtdb_sensitivity.py` | Same derived pair-level table with GTDB genus/species labels and NCBI-GTDB concordance fields |
+| Five-fold genus-blocked cross-validation (Table S7) | `scripts/02_genus_blocked_cv_one.py`, `scripts/02b_combine_cv_results.py` | Derived pair-level table; the combine script uses the per-method CV output tables |
+| Species/species-pair collapsed analysis (Table S6A) | `scripts/robustness/08_species_pair_collapsed_roc.py` | Pairwise positive and congeneric-negative method outputs plus frozen NCBI taxonomy |
+| Family- and order-blocked analyses (Table S7) | `scripts/robustness/09_phylogenetic_blocked_cv_one.py`, `scripts/robustness/09b_combine_blocked_cv.py` | Pairwise method outputs plus taxonomic lineage labels; the combine script uses per-method blocked-CV outputs |
+| FastAAI single-copy-protein sensitivity (Table S9) | `scripts/robustness/11_fastaai_scp_sensitivity.py` | FastAAI positive and congeneric-negative pair outputs containing raw Jaccard score and recovered SCP count |
+| Assembly-level sensitivity (Table S8) | `scripts/robustness/12_assembly_level_sensitivity.py` | Pairwise method outputs plus genome assembly-level metadata |
+| Genus-cluster bootstrap AUC and paired complete-case AUC differences (Table S6B) | `scripts/robustness/13_cluster_bootstrap_auc_one.py`, `scripts/robustness/13b_paired_complete_case_bootstrap.py`, `scripts/robustness/13c_combine_cluster_bootstrap.py` | Pairwise outputs for the four methods plus genus labels; the combine script uses the bootstrap output tables |
 
-Required header:
+## Supporting files
 
-```text
-method	reference	genus	class	score
-```
+- `config/analysis_config.json` stores the random seed, literature thresholds, score directions, and bootstrap/CV settings.
+- `scripts/common.py` and `scripts/robustness/common_v2.py` provide shared analysis functions and input parsing.
+- `scripts/00_prepare_inputs.py` builds the derived pair-level analysis table from the frozen taxonomy/provenance metadata and pairwise method outputs.
 
-Each row represents one method/pair/reference combination. `method` must be `16S rRNA`, `FastANI`, `Mash`, or `FastAAI`; `reference` is `NCBI` or `GTDB`; `class` is `SS` (same species) or `SGDS` (same genus/different species). Use percent units for 16S rRNA and FastANI, Mash distance on its native 0–1 scale, and raw FastAAI/Jaccard similarity. Rows without a usable numeric score should be omitted.
+The large pairwise method outputs, taxonomy tables, and derived analysis tables are intentionally not stored in GitHub.
 
-For each method/reference, only genera containing at least one SS and one SGDS comparison are retained, matching the manuscript analysis.
+## Provenance
 
-## Run
-
-```bash
-python scripts/statistical_analysis/roc_pr.py
-python scripts/statistical_analysis/thresholds.py
-python scripts/statistical_analysis/plot.py
-```
-
-`roc_pr.py` uses NCBI labels by default; use `--reference GTDB` for the GTDB sensitivity analysis.
-
-## Outputs
-
-Outputs are written to `outputs/statistical_analysis/` and include ROC/PR summaries, curve points, literature-threshold performance, and the combined ROC/PR figure.
-
-Fixed criteria are 16S rRNA identity ≥98.65%, FastANI ≥95% ANI, and Mash distance ≤0.05. No universal literature-supported cutoff is imposed on raw FastAAI/Jaccard similarity. Mash is sign-reversed internally for ROC/PR calculations because lower distance indicates greater similarity.
+The Python files under `final_species_discrimination/` are verbatim copies from the canonical analysis bundle embedded in `MASTER_30K_ANALYSIS_AUDIT.ipynb`; only their repository location is different. Numeric prefixes are retained to preserve direct correspondence with the original analysis workflow.

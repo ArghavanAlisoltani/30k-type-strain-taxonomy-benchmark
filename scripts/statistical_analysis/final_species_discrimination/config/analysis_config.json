@@ -1,0 +1,16 @@
+{
+  "random_seed": 20260914,
+  "cv_folds": 5,
+  "binary_cluster_bootstrap_replicates": 5000,
+  "macro_auc_bootstrap_replicates": 5000,
+  "min_lineage_positive_pairs": 20,
+  "min_lineage_negative_pairs": 20,
+  "min_phylum_positive_pairs": 100,
+  "min_phylum_negative_pairs": 100,
+  "metrics": {
+    "16S": {"column": "identity_16s", "direction": "higher", "literature_threshold": 98.65, "literature_rule": ">="},
+    "FastANI": {"column": "fastani", "direction": "higher", "literature_threshold": 95.0, "literature_rule": ">="},
+    "Mash": {"column": "mash_distance", "direction": "lower", "literature_threshold": 0.05, "literature_rule": "<="},
+    "FastAAI_Jaccard": {"column": "fastaai_jaccard", "direction": "higher", "literature_threshold": null, "literature_rule": null}
+  }
+}
