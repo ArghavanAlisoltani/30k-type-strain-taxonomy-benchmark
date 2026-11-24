@@ -1,49 +1,26 @@
-## **Taxonomic Resolution of 16S rRNA, FastANI, Mash, and FastAAI across 30,495 Prokaryotic Type-Strain Genomes**
+# Taxonomic Resolution of 16S rRNA, FastANI, Mash, and FastAAI across 30,495 Type-Strain Genomes
 
-This study evaluates four complementary sequence-based approaches—16S rRNA identity,
-FastANI, Mash, and FastAAI/Jaccard—across a frozen collection of prokaryotic
-type-strain genomes. The repository provides the accession list, standardized taxonomy,
-compact NCBI assembly metadata, provenance notes, and custom scripts.
+## Inputs
 
-## Dataset snapshot
+- `data/gca_accessions_30495.txt` — frozen GCA accession.version list
+- `data/final_clean_taxonomy_30495_UPDATED.tsv` — frozen NCBI-derived taxonomy
+- `data/ncbi_assembly_metadata_key_columns_30495.tsv` — assembly metadata
+- `data/taxonomy_fill_source.tsv` — source of completed ranks
+- `data/GTDB_R232_30495_taxonomy_status.tsv` — GTDB assignment status
+- Genome FASTA assemblies and large pairwise score files are supplied separately.
 
-The benchmark contains **30,495 unique GenBank assembly accessions**:
+## Analysis order
 
-| Category | Count | Percentage |
-|---|---:|---:|
-| Bacteria | 29,383 | 96.4% |
-| Archaea | 1,112 | 3.6% |
-| Complete Genome | 5,970 | 19.6% |
-| Chromosome | 480 | 1.6% |
-| Scaffold | 9,676 | 31.7% |
-| Contig | 14,369 | 47.1% |
+1. Retrieve NCBI accession–TaxID mappings: `scripts/taxonomy/fetch_ncbi_taxids.sh`.
+2. Inspect optional upper-rank fill proposals: `scripts/taxonomy/taxonomy_fill_safe.py` (dry-run default).
+3. Predict bacterial and archaeal 16S rRNA genes: `scripts/16s_rRNA/run_rnammer.sh`.
+4. Extract full-length copies, select one sequence per genome and summarize recovery: `scripts/16s_rRNA/process_rnammer.py`.
+5. Align full-length 16S sequences with MAFFT and calculate site conservation: `scripts/16s_rRNA/conservation.py`.
+6. Calculate 16S pairwise identity with VSEARCH: `scripts/16s_rRNA/run_vsearch.sh`.
+7. Generate FastANI, Mash and FastAAI numerical scores using the reported method versions. Historical command scripts are not yet included.
+8. Assign scores to taxonomic relationships: `scripts/taxonomy/classify_pairwise_ranks.py`.
+9. Supply original pairwise and GTDB inputs under `scripts/statistical_analysis/final_species_discrimination/inputs/` (see `scripts/statistical_analysis/README.md`).
+10. Run `prepare_inputs.py`, `primary_roc_pr.py`, `gtdb_sensitivity.py` and robustness scripts under `scripts/statistical_analysis/final_species_discrimination/scripts/`.
+11. Run figure scripts under `scripts/sankey_plots/` and `scripts/other_plots/`.
 
-Complete Genome and Chromosome assemblies together account for 6,450 genomes (21.2%).
-
-## Data retrieval
-
-Type-strain records were retrieved from the NCBI Datasets Genome web interface on
-**4 May 2026** using the **type material only** filter:
-
-- Bacteria: <https://www.ncbi.nlm.nih.gov/datasets/genome/?taxon=2&type_material_only=true>
-- Archaea: <https://www.ncbi.nlm.nih.gov/datasets/genome/?taxon=2157&type_material_only=true>
-
-GenBank assembly accessions beginning with `GCA_` were retained as primary identifiers.
-
-
-## Main data files
-
-- `data/final_clean_taxonomy_30495.csv`: standardized nine-rank taxonomy,
-  one row per GCA accession.
-- `data/ncbi_assembly_metadata_key_columns_30495.tsv`: compact 31-column subset
-  of the original 150-column parsed NCBI metadata table.
-- `data/gca_accessions_30495.txt`: one GCA accession per line.
-
-
-## Citation
-
-
-
-## Licensing
-
-
+Commands, file formats, and the two distinct VSEARCH modes are in [`docs/workflow.md`](docs/workflow.md). Code checks: `python -m unittest discover -s tests -v`.

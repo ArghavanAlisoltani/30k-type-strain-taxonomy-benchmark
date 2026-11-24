@@ -1,11 +1,12 @@
-# Data directory
+# Input tables
 
-Every accession-level file contains exactly **30,495 unique GCA accessions** or is derived from that fixed accession set.
+| File | Contents |
+|---|---|
+| `gca_accessions_30495.txt` | One GenBank assembly accession.version per row |
+| `final_clean_taxonomy_30495_UPDATED.tsv` | Frozen NCBI-derived classification by assembly |
+| `ncbi_assembly_metadata_key_columns_30495.tsv` | Frozen NCBI assembly metadata |
+| `taxonomy_fill_source.tsv` | Rank-fill source records |
+| `GTDB_R232_30495_taxonomy_status.tsv` | R232 taxonomic assignment/status |
+| `dataset_summary.tsv` | Dataset composition |
 
-- `final_clean_taxonomy_30495.csv`: standardized taxonomy.
-- `taxonomy_fill_provenance.tsv`: rank-level record of repaired taxonomy fields; final values are synchronized to `final_clean_taxonomy_30495.csv`. `source` reports the provenance database recorded in the audit; `not_recorded` indicates no source was recorded for that repair in the audit workbook.
-- `ncbi_assembly_metadata_key_columns_30495.tsv`: compact NCBI assembly metadata.
-- `gca_accessions_30495.txt`: accession manifest.
-- `dataset_summary.tsv`: domain and assembly-level summaries.
-
-Large pairwise analysis tables are not stored in this repository because of their size. Required input formats are documented with the corresponding scripts under `scripts/`.
+Large genome FASTA files and pairwise numerical results are not in this directory. See `../docs/workflow.md` for file formats and execution order.

@@ -1,27 +1,25 @@
-# Statistical analysis
+# Species-discrimination analysis
 
-This directory contains the **exact analysis code used for the finalized species-discrimination results**. The canonical scripts are under `final_species_discrimination/`. No analysis data are stored in this repository.
+Working directory: `scripts/statistical_analysis/final_species_discrimination/`.
 
-The existing `roc_pr.py`, `thresholds.py`, and `plot.py` are compact convenience scripts created for easy application.
+## Required local inputs
 
-## Result-to-script map
+- `inputs/raw_uploads/final_clean_taxonomy_30495.csv` — local CSV with `accession`, `phylum`, `genus`, `species` columns derived from frozen taxonomy
+- `inputs/raw_uploads/FINAL_30495_NCBI_GTDB_R232_provenance_master.tsv` — local GTDB provenance master
+- `inputs/extracted/positive/{MASH.dat,F-ANI.dat,F-AAI.dat,VSEARCH.dat}`
+- `inputs/extracted/genus_negative/{MASH.dat,F-ANI.dat,F-AAI.dat,16S.dat}`
 
-| Result | Exact script(s) | Input type |
-|---|---|---|
-| Primary NCBI ROC/PR, literature-threshold performance, common complete-case analysis (Tables S4-S5) | `scripts/primary_roc_pr.py` | Derived pair-level table containing NCBI SS/SGDS labels and numeric 16S, FastANI, Mash, and FastAAI/Jaccard scores |
-| GTDB R232 relabeling sensitivity (Table S4) | `scripts/gtdb_sensitivity.py` | Same derived pair-level table with GTDB genus/species labels and NCBI-GTDB concordance fields |
-| Five-fold genus-blocked cross-validation (Table S7) | `scripts/genus_blocked_cv.py`, `scripts/combine_genus_blocked_cv.py` | Derived pair-level table; the combine script uses the per-method CV output tables |
-| Species/species-pair collapsed analysis (Table S6A) | `scripts/robustness/species_pair_collapsed_roc.py` | Pairwise positive and congeneric-negative method outputs plus frozen NCBI taxonomy |
-| Family- and order-blocked cross-validation (Table S7) | `scripts/robustness/family_order_blocked_cv.py`, `scripts/robustness/combine_family_order_blocked_cv.py` | Pairwise method outputs plus family/order taxonomic labels; the combine script uses per-method blocked-CV outputs |
-| FastAAI single-copy-protein sensitivity (Table S9) | `scripts/robustness/fastaai_scp_sensitivity.py` | FastAAI positive and congeneric-negative pair outputs containing raw Jaccard score and recovered SCP count |
-| Assembly-level sensitivity (Table S8) | `scripts/robustness/assembly_level_sensitivity.py` | Pairwise method outputs plus genome assembly-level metadata |
-| Genus-cluster bootstrap AUC and paired complete-case AUC differences (Table S6B) | `scripts/robustness/genus_cluster_bootstrap_auc.py`, `scripts/robustness/paired_complete_case_bootstrap.py`, `scripts/robustness/combine_cluster_bootstrap.py` | Pairwise outputs for the four methods plus genus labels; the combine script uses the bootstrap output tables |
+The original large numerical files and original full GTDB provenance master are not committed. The main repository taxonomy file is `data/final_clean_taxonomy_30495_UPDATED.tsv` (TSV), not the local CSV input expected by `prepare_inputs.py`.
 
-## Supporting files
+## Execution order
 
-- `config/analysis_config.json` stores the random seed, literature thresholds, score directions, and bootstrap/CV settings.
-- `scripts/common.py` and `scripts/robustness/common_v2.py` provide shared analysis functions and input parsing.
-- `scripts/prepare_inputs.py` builds the derived pair-level analysis table from the frozen taxonomy/provenance metadata and pairwise method outputs.
+```bash
+cd scripts/statistical_analysis/final_species_discrimination
+python scripts/prepare_inputs.py
+python scripts/primary_roc_pr.py
+python scripts/gtdb_sensitivity.py
+python scripts/genus_blocked_cv.py
+python scripts/combine_genus_blocked_cv.py
+```
 
-The large pairwise method outputs, taxonomy tables, and derived analysis tables are intentionally not stored in GitHub.
-
+Further scripts under `scripts/robustness/` use the same method-score inputs. Configuration: `config/analysis_config.json`. Core derived score table: `inputs/derived/binary_analysis_core.tsv`.
