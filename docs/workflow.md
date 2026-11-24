@@ -60,6 +60,3 @@ Generate original FastANI v1.33, Mash v2.3 (`k=21`, sketch size 1000), FastAAI v
 
 QC targets from the manuscript: 30,495 unique accessions, 16,402 same-species pairs and 1,754,127 congeneric/different-species pairs. No new counts are asserted by these scripts without execution against the frozen cohort.
 
-## Supplied source scripts
-
-Unmodified collaborator-provided source files are under `scripts/16s_rRNA/source/`: `run_rnammer_bac.sh`, `run_rnammer_arc.sh`, `plot_entropy_bac.py`, and `plot_entropy_arc.py`. The maintained runners and conservation utility above remove personal paths and output-name collisions. The original source files were not run or validated against the archived 30,495-assembly dataset in this repository update.
