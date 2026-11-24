@@ -17,7 +17,7 @@
 4. Extract full-length copies, select one sequence per genome and summarize recovery: `scripts/16s_rRNA/process_rnammer.py`.
 5. Align full-length 16S sequences with MAFFT and calculate site conservation: `scripts/16s_rRNA/conservation.py`.
 6. Calculate 16S pairwise identity with VSEARCH: `scripts/16s_rRNA/run_vsearch.sh`.
-7. Generate FastANI, Mash and FastAAI numerical scores using the reported method versions. Historical command scripts are not yet included.
+7. Generate FastANI, Mash and FastAAI scores using [`docs/30K_FastANI_Mash_FastAAI_Commands.md`](docs/30K_FastANI_Mash_FastAAI_Commands.md).
 8. Assign scores to taxonomic relationships: `scripts/taxonomy/classify_pairwise_ranks.py`.
 9. Supply original pairwise and GTDB inputs under `scripts/statistical_analysis/final_species_discrimination/inputs/` (see `scripts/statistical_analysis/README.md`).
 10. Run `prepare_inputs.py`, `primary_roc_pr.py`, `gtdb_sensitivity.py` and robustness scripts under `scripts/statistical_analysis/final_species_discrimination/scripts/`.
