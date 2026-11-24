@@ -1,6 +1,6 @@
 # Workflow commands and input/output formats
 
-All paths below are examples. Preserve the original 4 May 2026 accession manifest and frozen taxonomic labels. Running NCBI Datasets again retrieves current records, not necessarily the historical classifications.
+Use `data/gca_accessions_30495.txt` and `data/final_clean_taxonomy_30495_UPDATED.tsv` for the analysis. The NCBI Datasets command below retrieves current taxonomic records.
 
 ## 1. NCBI TaxIDs and taxonomy
 
