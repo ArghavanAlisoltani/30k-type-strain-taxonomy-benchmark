@@ -10,7 +10,7 @@ bash scripts/taxonomy/fetch_ncbi_taxids.sh /absolute/path/to/data/gca_accessions
 
 Outputs: `assembly_summary.jsonl`, `assembly_taxids.tsv`, `taxids.txt`, `taxonomy.jsonl`. The final standardized taxonomy in `data/final_clean_taxonomy_30495_UPDATED.tsv` remains the benchmark reference.
 
-`taxonomy_fill_safe.py` is a conservative candidate for legacy `GenID={...}` files, not the verified historical repair script. It only proposes missing kingdom–family ranks, does not update genus/species and performs no external LPSN/GTDB curation.
+`taxonomy_fill_safe.py` proposes missing kingdom–family ranks in `GenID={...}` files. It does not update genus/species or perform external LPSN/GTDB curation.
 
 ```bash
 python scripts/taxonomy/taxonomy_fill_safe.py --input /absolute/path/to/original_GenID.txt
@@ -32,7 +32,7 @@ python scripts/16s_rRNA/process_rnammer.py --genomes /absolute/path/to/bacterial
 python scripts/16s_rRNA/process_rnammer.py --genomes /absolute/path/to/archaeal_fna --gff-dir /absolute/path/to/new_arc_rnammer --out /absolute/path/to/new_arc_16s
 ```
 
-RNAmmer uses `-S bac` or `-S arc`, `-m ssu`, `-multi`, and outputs per-genome XML, GFF and FASTA. `process_rnammer.py` obtains each sequence from GFF genomic coordinates (reverse-complements minus-strand calls), retains 1450–1700 nt sequences and selects the maximum RNAmmer GFF score per genome. Outputs: `full_length_16s.fna`, `representative_16s.fna`, `16s_calls.tsv` (genomic coordinates, lengths and scores), and `16s_recovery_by_genome.tsv`. Provide `--taxonomy /absolute/path/to/data/final_clean_taxonomy_30495_UPDATED.tsv` to additionally generate `16s_recovery_by_phylum.tsv`. Verify GFF FASTA-coordinate consistency and counts against archived outputs before identifying the new processor as the historical script.
+RNAmmer uses `-S bac` or `-S arc`, `-m ssu`, `-multi`, and outputs per-genome XML, GFF and FASTA. `process_rnammer.py` obtains each sequence from GFF genomic coordinates (reverse-complements minus-strand calls), retains 1450–1700 nt sequences and selects the maximum RNAmmer GFF score per genome. Outputs: `full_length_16s.fna`, `representative_16s.fna`, `16s_calls.tsv` (genomic coordinates, lengths and scores), and `16s_recovery_by_genome.tsv`. Provide `--taxonomy /absolute/path/to/data/final_clean_taxonomy_30495_UPDATED.tsv` to additionally generate `16s_recovery_by_phylum.tsv`. Verify GFF-to-FASTA coordinate consistency, lengths, and expected genome-level counts.
 
 ## 3. 16S conservation
 
@@ -47,7 +47,7 @@ Outputs: one tabular information profile (`.tsv`) and one final figure (`.pdf`).
 
 ## 4. VSEARCH v2.31.0
 
-The manuscript describes `--usearch_global` with `--self`, `--maxaccepts 0`, `--maxrejects 0`, `--id 0.0` and `--iddef 2`. The newer collaborator methods document describes **different** `--allpairs_global --acceptall --qmask none` comparisons. These are distinct modes, with self-hits and input pair counting differing. The original logged command and output table must determine which is authoritative for the paper.
+The manuscript describes `--usearch_global` with `--self`, `--maxaccepts 0`, `--maxrejects 0`, `--id 0.0` and `--iddef 2`. The alternative `--allpairs_global --acceptall --qmask none` mode yields a different comparison set. Use the mode corresponding to the intended analysis and check self-hits and pair counts.
 
 ```bash
 bash scripts/16s_rRNA/run_vsearch.sh manuscript /absolute/path/to/representative_16s.fna /absolute/path/to/vsearch_blast6.tsv
@@ -56,7 +56,7 @@ bash scripts/16s_rRNA/run_vsearch.sh allpairs /absolute/path/to/full_length_16s.
 
 ## 5. Genome-wide scores and statistical analysis
 
-Generate original FastANI v1.33, Mash v2.3 (`k=21`, sketch size 1000), FastAAI v0.1.17 results with preserved original commands and accession-pair lists. The original executable command files were not in the supplied uploads. The existing statistical scripts accept these locally staged score files and reference taxonomy. See `scripts/statistical_analysis/README.md` for required filenames and execution order.
+Generate FastANI v1.33, Mash v2.3 (`k=21`, sketch size 1000), and FastAAI v0.1.17 scores following [`30K_FastANI_Mash_FastAAI_Commands.md`](30K_FastANI_Mash_FastAAI_Commands.md). Stage the scores and reference taxonomy for downstream statistical analysis. See `scripts/statistical_analysis/README.md` for required filenames and execution order.
 
-QC targets from the manuscript: 30,495 unique accessions, 16,402 same-species pairs and 1,754,127 congeneric/different-species pairs. No new counts are asserted by these scripts without execution against the frozen cohort.
+Check expected counts: 30,495 accessions, 16,402 same-species pairs, and 1,754,127 same-genus/different-species pairs.
 
