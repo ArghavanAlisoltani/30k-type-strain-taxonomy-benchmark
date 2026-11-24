@@ -11,16 +11,17 @@
 
 ## Analysis order
 
-1. Retrieve NCBI accession–TaxID mappings: `scripts/taxonomy/fetch_ncbi_taxids.sh`.
-2. Inspect optional upper-rank fill proposals: `scripts/taxonomy/taxonomy_fill_safe.py` (dry-run default).
-3. Predict bacterial and archaeal 16S rRNA genes: `scripts/16s_rRNA/run_rnammer.sh`.
-4. Extract full-length copies, select one sequence per genome and summarize recovery: `scripts/16s_rRNA/process_rnammer.py`.
-5. Align full-length 16S sequences with MAFFT and calculate site conservation: `scripts/16s_rRNA/conservation.py`.
-6. Calculate 16S pairwise identity with VSEARCH: `scripts/16s_rRNA/run_vsearch.sh`.
-7. Generate FastANI, Mash and FastAAI scores using [`docs/30K_FastANI_Mash_FastAAI_Commands.md`](docs/30K_FastANI_Mash_FastAAI_Commands.md).
-8. Assign scores to taxonomic relationships: `scripts/taxonomy/classify_pairwise_ranks.py`.
-9. Supply original pairwise and GTDB inputs under `scripts/statistical_analysis/final_species_discrimination/inputs/` (see `scripts/statistical_analysis/README.md`).
-10. Run `prepare_inputs.py`, `primary_roc_pr.py`, `gtdb_sensitivity.py` and robustness scripts under `scripts/statistical_analysis/final_species_discrimination/scripts/`.
-11. Run figure scripts under `scripts/sankey_plots/` and `scripts/other_plots/`.
+1. Retrieve NCBI TaxIDs and taxonomy: `scripts/taxonomy/fetch_ncbi_taxids.sh`.
+2. Check GenID taxonomy and accession set: `scripts/taxonomy/audit_dictionary.py`.
+3. Inspect missing upper-rank assignments: `scripts/taxonomy/taxonomy_fill_safe.py`.
+4. Predict 16S genes: `scripts/16s_rRNA/run_rnammer.sh`.
+5. Extract qualifying copies and calculate recovery: `scripts/16s_rRNA/process_rnammer.py`.
+6. Align sequences and compute conservation: `scripts/16s_rRNA/conservation.py`.
+7. Calculate 16S pairwise identities: `scripts/16s_rRNA/run_vsearch.sh`.
+8. Generate FastANI, Mash and FastAAI scores: `docs/30K_FastANI_Mash_FastAAI_Commands.md`. For FastANI blocks and Mash matrix conversion, use `docs/score_generation.md`.
+9. Assign scores to taxonomic groups: `scripts/taxonomy/classify_pairwise_ranks.py`.
+10. Stage pairwise and GTDB inputs under `scripts/statistical_analysis/final_species_discrimination/inputs/`.
+11. Run `prepare_inputs.py`, `primary_roc_pr.py`, `gtdb_sensitivity.py`, and robustness scripts.
+12. Generate plots with scripts under `scripts/sankey_plots/` and `scripts/other_plots/`.
 
-Commands, file formats, and the two distinct VSEARCH modes are in [`docs/workflow.md`](docs/workflow.md). Code checks: `python -m unittest discover -s tests -v`.
+Commands and formats: [workflow](docs/workflow.md), [genome comparison](docs/30K_FastANI_Mash_FastAAI_Commands.md), [score-generation utilities](docs/score_generation.md).

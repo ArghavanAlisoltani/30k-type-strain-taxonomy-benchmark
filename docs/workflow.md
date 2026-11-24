@@ -8,7 +8,16 @@ All paths below are examples. Preserve the original 4 May 2026 accession manifes
 bash scripts/taxonomy/fetch_ncbi_taxids.sh /absolute/path/to/data/gca_accessions_30495.txt /absolute/path/to/new_taxonomy_output
 ```
 
-Outputs: `assembly_summary.jsonl`, `assembly_taxids.tsv`, `taxids.txt`, `taxonomy.jsonl`. The final standardized taxonomy in `data/final_clean_taxonomy_30495_UPDATED.tsv` remains the benchmark reference.
+Outputs: `assembly_summary.jsonl`, `assembly_taxids.tsv`, `taxids.txt`, `taxonomy.jsonl`.
+
+Check an input GenID dictionary:
+
+```bash
+python scripts/taxonomy/audit_dictionary.py \
+  --dictionary /absolute/path/to/dictionary.py \
+  --manifest /absolute/path/to/data/gca_accessions_30495.txt \
+  --reference-tsv /absolute/path/to/data/final_clean_taxonomy_30495_UPDATED.tsv
+```
 
 `taxonomy_fill_safe.py` proposes missing kingdom–family ranks in `GenID={...}` files. It does not update genus/species or perform external LPSN/GTDB curation.
 
@@ -36,7 +45,7 @@ RNAmmer uses `-S bac` or `-S arc`, `-m ssu`, `-multi`, and outputs per-genome XM
 
 ## 3. 16S conservation
 
-The conservation scripts provided by collaborators used MAFFT `--auto --thread 16`, removed alignment columns with more than 50% non-ACGTU characters, calculated Shannon information `max(0,2-H)`, and smoothed with a 12-position moving average. Their code treated `T` and `U` as distinct accepted characters. `conservation.py` preserves that convention by default, with `--normalize-u` providing an optional four-state check.
+Use MAFFT `--auto --thread 16`. Exclude columns with more than 50% non-ACGTU characters, compute `max(0,2-H)`, and apply a 12-position moving average. `conservation.py` treats T and U separately by default; use `--normalize-u` for a four-state calculation.
 
 ```bash
 mafft --auto --thread 16 /absolute/path/to/full_length_16s.fna > /absolute/path/to/aligned_16s.fna
@@ -56,7 +65,7 @@ bash scripts/16s_rRNA/run_vsearch.sh allpairs /absolute/path/to/full_length_16s.
 
 ## 5. Genome-wide scores and statistical analysis
 
-Generate FastANI v1.33, Mash v2.3 (`k=21`, sketch size 1000), and FastAAI v0.1.17 scores following [`30K_FastANI_Mash_FastAAI_Commands.md`](30K_FastANI_Mash_FastAAI_Commands.md). Stage the scores and reference taxonomy for downstream statistical analysis. See `scripts/statistical_analysis/README.md` for required filenames and execution order.
+Generate FastANI v1.33, Mash v2.3 (`k=21`, sketch size 1000), and FastAAI v0.1.17 scores using [`30K_FastANI_Mash_FastAAI_Commands.md`](30K_FastANI_Mash_FastAAI_Commands.md). For FastANI blocks, Mash matrix conversion, and dictionary input checks, see [`score_generation.md`](score_generation.md). Stage scores and taxonomy according to [`statistical_analysis/README.md`](../scripts/statistical_analysis/README.md).
 
 Check expected counts: 30,495 accessions, 16,402 same-species pairs, and 1,754,127 same-genus/different-species pairs.
 

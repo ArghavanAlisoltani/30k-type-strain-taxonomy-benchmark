@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
-"""Conservatively propose upper-rank fills in a legacy GenID dictionary.
+"""Propose missing upper-rank assignments in a GenID dictionary.
 
-Candidate replacement for colleague-supplied taxonomy_fix.py. This is NOT evidence
-that the original manuscript was generated with this revised implementation.
-No network access; dry-run by default; original non-missing labels are preserved.
+No network access. Dry-run by default. Existing assigned labels are preserved.
 """
 from __future__ import annotations
 
@@ -54,7 +52,7 @@ def lookup_keys(record: dict[str, object]) -> list[tuple[str, tuple[str, ...]]]:
 
 
 def proposed_fills(data: dict[str, dict[str, object]]) -> list[dict[str, str]]:
-    # Build references exclusively from original records, not from filled values.
+    # Build lookup labels from input records without cascading proposed values.
     indexes: dict[str, dict[tuple[str, ...], dict[str, set[str]]]] = {
         "species_lookup": defaultdict(lambda: defaultdict(set)),
         "genus_lookup": defaultdict(lambda: defaultdict(set)),

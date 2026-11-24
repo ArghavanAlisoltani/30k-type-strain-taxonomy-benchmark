@@ -9,7 +9,11 @@ Working directory: `scripts/statistical_analysis/final_species_discrimination/`.
 - `inputs/extracted/positive/{MASH.dat,F-ANI.dat,F-AAI.dat,VSEARCH.dat}`
 - `inputs/extracted/genus_negative/{MASH.dat,F-ANI.dat,F-AAI.dat,16S.dat}`
 
-The original large numerical files and original full GTDB provenance master are not committed. The main repository taxonomy file is `data/final_clean_taxonomy_30495_UPDATED.tsv` (TSV), not the local CSV input expected by `prepare_inputs.py`.
+Generate scores with [genome comparison commands](../../docs/30K_FastANI_Mash_FastAAI_Commands.md) or [score-generation utilities](../../docs/score_generation.md).
+
+For `F-ANI.dat`, `prepare_inputs.py` reads `genome1`, `genome2`, `ANI` from `positive/` and `genome1`, `genome2`, `ANI`, `matched_fragments`, `total_query_fragments` from `genus_negative/`. Select the fixed SS and SGDS pair sets before staging these files.
+
+Convert `data/final_clean_taxonomy_30495_UPDATED.tsv` to a CSV with `accession`, `phylum`, `genus`, `species` columns for `inputs/raw_uploads/final_clean_taxonomy_30495.csv`.
 
 ## Execution order
 
