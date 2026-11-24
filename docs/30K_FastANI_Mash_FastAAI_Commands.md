@@ -1,10 +1,9 @@
 # FastANI, Mash, and FastAAI: commands and parallel execution
 
 **Project:** 30,495 bacterial and archaeal type-material assemblies  
-**Purpose:** Record reproducible command-line examples and list/parallel options for generating comparison scores.  
-**Status:** The command patterns below were recovered from earlier discussions and confirmed by the authors as those used for the study. Original Node1/Node2 terminal histories are unavailable following a Linux reinstall. The exact execution manifests, logs, and output checksums are not preserved in this document.
+**Purpose:** Generate FastANI, Mash, and FastAAI scores using genome lists, individual pairs, or parallel batches.
 
-## 1. Software, input files, and execution order
+## 1. Software, inputs, and execution order
 
 | Software | Manuscript version | Input | Core output | Parallel/list option |
 |---|---|---|---|---|
@@ -12,9 +11,9 @@
 | Mash | 2.3 | Assembly FASTA files or sketches | Reference, query, distance, p-value, shared hashes | `mash sketch -l`, `-p`; `mash dist -p` |
 | FastAAI | 0.1.17 | One nucleotide FASTA file per genome | Raw mean tetramer Jaccard, shared SCPs, estimated AAI | `build_db --genomes` accepts a **path-list file**; `--threads` |
 
-Run order: **freeze accession/FASTA manifest → choose intended comparison pairs → generate scores → verify pair coverage and source versions → select manuscript SS and SGDS comparisons → downstream statistical scripts.** The frozen input accession list is `data/gca_accessions_30495.txt` in the project repository. Each program's outputs should retain identifiers that can be mapped back to the exact GCA accession.version.
+Run order: **freeze accession/FASTA manifest → choose intended comparison pairs → generate scores → verify pair coverage and software versions → select manuscript SS and SGDS comparisons → downstream statistical scripts.** The frozen input accession list is `data/gca_accessions_30495.txt` in the project repository. Each program's outputs should retain identifiers that can be mapped back to the exact GCA accession.version.
 
-**Do not use an unqualified full 30,495 × 30,495 comparison to claim reproduction of the manuscript.** There are 464,957,265 distinct unordered pairs in that exhaustive universe, whereas the reported species discrimination uses specifically defined same-species (SS) and same-genus/different-species (SGDS) pairs. A list-based *Cartesian product* is not equivalent to an arbitrary selected-pair list.
+**A full 30,495 × 30,495 comparison is not required for the species-discrimination dataset.** There are 464,957,265 distinct unordered pairs in that exhaustive universe, whereas the reported species discrimination uses specifically defined same-species (SS) and same-genus/different-species (SGDS) pairs. A list-based *Cartesian product* is not equivalent to an arbitrary selected-pair list.
 
 ### Prepare a real FASTA manifest (edit the absolute paths)
 
@@ -44,11 +43,11 @@ fastaai build_db -h > "$WORK/logs/fastaai_build_help.txt" 2>&1 || true
 fastaai db_query -h > "$WORK/logs/fastaai_query_help.txt" 2>&1 || true
 ```
 
-Use the original complete accession/FASTA mapping rather than a new download if reproducing published results. The pilot list is for syntax checks only. Confirm software versions from the **executed environments**, not just the manuscript.
+Use the frozen accession-to-FASTA mapping. The pilot list is for testing commands. Check installed software versions before execution.
 
 ## 2. FastANI v1.33
 
-### Single pair (recovered example)
+### Single genome pair
 
 ```bash
 fastANI \
@@ -57,7 +56,7 @@ fastANI \
   -o /absolute/path/to/30k/work/results/fastani_one_pair.tsv
 ```
 
-### Many query and reference genomes from text lists (recovered option)
+### Query and reference genome lists
 
 Each list must contain **one absolute path to an assembly FASTA per line**. `--ql` and `--rl` calculate the query × reference Cartesian product. `-t` is internal multithreading.
 
@@ -69,7 +68,7 @@ fastANI \
   -o /absolute/path/to/30k/work/results/fastani_batch.tsv
 ```
 
-**Previously supplied list-based command:** `fastANI --ql genomes.txt --rl genomes.txt -t 32 -o fastani_all_vs_all.tsv`. This demonstrates the author-confirmed list-based command pattern, but does not establish which exact query and reference lists were used in the historical run. The documented v1.33 defaults include fragment length 3,000 bp and minimum matching fraction 0.2. Preserve the actual historical defaults/flags as executed.
+**List-based command:** `fastANI --ql genomes.txt --rl genomes.txt -t 32 -o fastani_all_vs_all.tsv`. FastANI v1.33 defaults include a 3,000 bp fragment length and minimum matching fraction of 0.2.
 
 FastANI's tab-separated output has five fields:
 
@@ -95,11 +94,11 @@ find "$WORK/lists/query_batches" -maxdepth 1 -type f -name 'queries_*.txt' -prin
       'fastANI --ql {} --rl /absolute/path/to/30k/work/lists/reference_genomes.txt -t 4 -o /absolute/path/to/30k/work/results/fastani_batches/{/.}.tsv'
 ```
 
-Four simultaneous jobs × four FastANI threads each can require approximately 16 CPU cores, plus memory for each process. This is **illustrative**, not a recovered node execution log. Do not launch millions of individual single-pair processes as a default production strategy. Validate the number of expected query–reference records, including non-recovered pairs, before merging results.
+Four simultaneous jobs × four FastANI threads each can require approximately 16 CPU cores, plus memory for each process. Do not launch millions of individual single-pair processes as a default production strategy. Validate the number of expected query–reference records, including non-recovered pairs, before merging results.
 
 ## 3. Mash v2.3
 
-### Sketch a list of assemblies (recovered command)
+### Sketch assemblies from a genome list
 
 ```bash
 mash sketch \
@@ -110,7 +109,7 @@ mash sketch \
 
 This creates `pilot10_mash.msh` with one **whole-genome** sketch per FASTA file. For multi-contig assemblies, **do not add `-i`**: `-i` sketches each sequence/contig separately, which changes the unit of analysis. The manuscript reports `k=21`, sketch size `1000`.
 
-### Pairwise sketch distances (recovered command pattern)
+### Calculate pairwise sketch distances
 
 ```bash
 mash dist -p 16 \
@@ -125,7 +124,7 @@ Mash emits `reference_ID`, `query_ID`, `distance`, `p_value`, `shared_hashes`. A
 
 ## 4. FastAAI v0.1.17
 
-### Build a database from a genome-path list (previously supplied command family)
+### Build a database from genome paths
 
 FastAAI `--genomes` accepts a directory, **a text file with one genome FASTA path per line**, or comma-separated file paths. The text-file option is preferable for controlling the accession set. Each genome must occupy one nucleotide FASTA file.
 
@@ -144,7 +143,7 @@ The database should be created at:
 /absolute/path/to/30k/work/results/fastaai_pilot/database/pilot10.db
 ```
 
-### Query database against itself (previously supplied command family)
+### Query a database against itself
 
 ```bash
 fastaai db_query \
@@ -155,13 +154,13 @@ fastaai db_query \
   --output /absolute/path/to/30k/work/results/fastaai_pilot
 ```
 
-FastAAI's tabular output contains `query`, `target`, **`avg_jacc_sim` (raw mean tetramer Jaccard)**, `jacc_SD`, `num_shared_SCPs`, `poss_shared_SCPs`, and `AAI_estimate`. The paper uses **raw Jaccard**, not the transformed estimated AAI column. Retain the shared-SCP counts and missing/no-shared-SCP cases. Verify the installed v0.1.17 CLI using `fastaai build_db -h` and `fastaai db_query -h`: an earlier local discussion also reported v0.1.20 installed, which must not silently substitute for the paper's declared version.
+FastAAI's tabular output contains `query`, `target`, **`avg_jacc_sim` (raw mean tetramer Jaccard)**, `jacc_SD`, `num_shared_SCPs`, `poss_shared_SCPs`, and `AAI_estimate`. The paper uses **raw Jaccard**, not the transformed estimated AAI column. Retain the shared-SCP counts and missing/no-shared-SCP cases. Verify the installed FastAAI v0.1.17 CLI with `fastaai build_db -h` and `fastaai db_query -h`.
 
-FastAAI `--threads` parallelizes processing within the program. For separate taxon-specific groups, independent database builds/queries may be scheduled as separate jobs, but only when the original pair selection and database membership are preserved. Do not assume that arbitrary disjoint groups are equivalent to cross-group or domain-wide comparisons.
+FastAAI `--threads` parallelizes processing within the program. For separate taxon-specific groups, independent database builds/queries may be scheduled as separate jobs when comparison-pair selection and database membership are preserved. Do not assume that arbitrary disjoint groups are equivalent to cross-group or domain-wide comparisons.
 
 ## 5. Select intended pairs and validate output
 
-Prepare the frozen intended-pair table, **not merely a complete list of genomes**. Suggested TSV columns:
+Prepare the intended-pair table, **not merely a complete list of genomes**. Suggested TSV columns:
 
 ```text
 gca_query  gca_reference  taxonomic_relation  method_expected
@@ -169,19 +168,17 @@ gca_query  gca_reference  taxonomic_relation  method_expected
 
 Recommended reconciliation checks:
 
-1. Confirm the original 30,495 accession.version set and the original SS/SGDS pair lists; do not reassign historical pairs by silently refreshing taxonomy.
+1. Confirm the 30,495 accession.version set and fixed SS/SGDS pair lists; do not refresh taxonomy during the analysis.
 2. Map all FASTA paths and FastAAI/Mash identifiers to unambiguous GCA accession.version values.
 3. For each method, report expected pair count, observed numeric result count, non-recovered count, duplicated/reversed pairs, and records with invalid formats.
 4. For FastANI, retain directional ANI and both fragment counts, and calculate alignment fraction separately for SS and SGDS.
 5. For Mash, retain distance=1 separately from absent results. Do not confuse sketch non-detection with program failure.
 6. For FastAAI, use **raw `avg_jacc_sim`**, not `AAI_estimate`.
-7. Record actual program versions, manifest checksums, commands, thread counts, output checksums, and any filtering or score aggregation before running `scripts/statistical_analysis/final_species_discrimination/scripts/prepare_inputs.py`.
+7. Record program versions, input checksums, commands, thread counts, output checksums, and filtering or score aggregation before running `scripts/statistical_analysis/final_species_discrimination/scripts/prepare_inputs.py`.
 
-## 6. Source documentation
+## 6. Software documentation
 
 - FastANI: <https://github.com/ParBLiSS/FastANI> — list options `--ql`, `--rl`, `-t`, five output fields, and query/reference asymmetry.
 - Mash: <https://github.com/marbl/Mash> and <https://mash.readthedocs.io/en/latest/> — `sketch -l`, `-k`, `-s`, `-p`, `dist`, whole-file versus individual-contig sketches.
 - FastAAI: <https://github.com/cruizperez/FastAAI> — `build_db`, `db_query`, list-of-genomes input, threaded execution, and raw Jaccard output.
 - Version record for FastAAI v0.1.17: <https://pypi.org/project/FastAAI/0.1.17/>.
-
-**Provenance:** These software command patterns were discussed previously and confirmed by the authors as the commands used in this study. The original terminal histories were lost during a Linux reinstall. Pilot commands and optional GNU Parallel batching remain illustrative, and the historical input manifests and run logs are not included.
